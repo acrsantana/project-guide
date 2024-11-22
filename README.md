@@ -18,6 +18,8 @@ Ever wished your project could explain itself? Now it can! 🪄 Project Guide us
 - 🔄 Recursive directory analysis
 - 🎨 Well-organized documentation
 
+checkout the guidebook.md in my other repo to see an example of what is generated: https://github.com/sojohnnysaid/vim-restman
+
 ## 🚀 Quick Start
 
 ### Prerequisites
