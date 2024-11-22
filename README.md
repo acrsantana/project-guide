@@ -5,7 +5,7 @@
 ![Made with Python](https://img.shields.io/badge/Made%20with-Python-yellow?style=for-the-badge)
 ![Powered by Anthropic](https://img.shields.io/badge/Powered%20by-Anthropic-blue?style=for-the-badge)
 
-Ever wished your project could explain itself? Now it can! 🪄 Project Whisperer uses AI to analyze your codebase and generate comprehensive documentation automagically. 
+Ever wished your project could explain itself? Now it can! 🪄 Project Guide uses AI to analyze your codebase and generate comprehensive documentation automagically. 
 
 ## ✨ Features
 
@@ -30,8 +30,8 @@ Ever wished your project could explain itself? Now it can! 🪄 Project Whispere
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/project-whisperer.git
-cd project-whisperer
+git clone https://github.com/yourusername/project-guide.git
+cd project-guide
 ```
 
 2. Create a virtual environment (recommended):
@@ -126,7 +126,7 @@ source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
 
 ## 🤝 Contributing
 
-Got ideas to make Project Whisperer even more magical? Contributions are welcome! 
+Got ideas to make Project Guide even more magical? Contributions are welcome! 
 
 1. 🍴 Fork the repo
 2. 🌱 Create your feature branch
