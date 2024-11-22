@@ -18,7 +18,10 @@ Ever wished your project could explain itself? Now it can! 🪄 Project Guide us
 - 🔄 Recursive directory analysis
 - 🎨 Well-organized documentation
 
-checkout the guidebook.md in my other repo to see an example of what is generated: https://github.com/sojohnnysaid/vim-restman
+Checkout the guidebook.md and guidebook-components.md in my other repo to see an example of what is generated: https://github.com/sojohnnysaid/vim-restman
+- guidebook.md is a medium-high level overview
+- guidebook-components.md is an indepth look at individual modules/functions and their inputs/outputs, including how they fit into the bigger picture.
+- Feel free to rename these and put them wherever makes the most sense.
 
 ## 🚀 Quick Start
 
