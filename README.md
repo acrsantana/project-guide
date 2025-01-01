@@ -34,7 +34,7 @@ Checkout the guidebook.md and guidebook-components.md in my other repo to see an
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/project-guide.git
+git clone https://github.com/sojohnnysaid/project-guide.git
 cd project-guide
 ```
 
