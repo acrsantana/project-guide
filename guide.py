@@ -9,7 +9,29 @@ from datetime import datetime
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Exclusion list
-EXCLUSION_LIST = ['.git', '.venv', 'node_modules', '__pycache__', '.DS_Store', 'pb_data', 'pb_public', 'migrations']
+EXCLUSION_LIST = [
+    '.git',
+    '.venv',
+    'node_modules',
+    '__pycache__',
+    '.DS_Store',
+    'pb_data',
+    'pb_public',
+    'migrations',
+    '.idea',
+    'k8s',
+    'olt',
+    'venv',
+    'compose.yaml',
+    'Dockerfile',
+    'handlers/__pycache__',
+    'handlers/coralReefClustering/__pycache__',
+    'handlers/disjointPathPlot/__pycache__'
+    'handlers/logical_adjacency/__pycache__',
+    'utils/__pycache__',
+    'images',
+    'data'
+]
 
 class ProjectAnalyzer:
     def __init__(self, project_dir):
@@ -85,24 +107,24 @@ class ProjectAnalyzer:
         root_contents_str = '\n'.join(root_contents)
 
         message = self.client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=1000,
+            model="claude-3-7-sonnet-20250219",
+            max_tokens=8192,
             temperature=0,
-            system="You are an AI assistant that summarizes the main language and purpose of a project.",
+            system="Você é um assistente de IA que resume a linguagem principal, assim como o propósito de um projeto.",
             messages=[{
                 "role": "user",
                 "content": [{
                     "type": "text",
                     "text": f"Project directory: {self.project_dir}\n\nFiles and directories:\n{root_contents_str}\n\n"
-                    "Based on the directory structure and file names, what is the main language used in this project? "
-                    "What is the project's purpose? Please provide a comprehensive summary."
+                    "Com base na estrutura de diretórios e nomes de arquivos, qual é o idioma principal usado neste projeto?"
+                    "Qual é o propósito do projeto? Forneça um resumo abrangente em uma linguagem acessível para desenvolvedores. O resumo deve ser gerado em Português do Brasil."
                 }]
             }]
         )
 
         summary = message.content[0].text
         self._update_findings('root_summary', summary)
-        self._append_to_summaries(f"Project Overview:\n{summary}")
+        self._append_to_summaries(f"Overview do projeto:\n{summary}")
         logging.info("Root analysis complete")
 
     def analyze_file(self, file_path):
@@ -114,21 +136,22 @@ class ProjectAnalyzer:
                 content = f.read()
 
             message = self.client.messages.create(
-                model="claude-3-5-sonnet-20241022",
-                max_tokens=1000,
+                model="claude-3-7-sonnet-20250219",
+                max_tokens=8192,
                 temperature=0,
-                system="You are an AI assistant that analyzes source code files.",
+                system="Você é um assistente de IA que analisa arquivos de código-fonte.",
                 messages=[{
                     "role": "user",
                     "content": [{
                         "type": "text",
-                        "text": f"Analyze this file: {rel_path}\n\nContent:\n{content}\n\n"
-                        "Please provide:\n"
-                        "1. Overall purpose of the file\n"
-                        "2. List of all fields/variables and their purposes\n"
-                        "3. Function definitions with inputs, outputs, and purposes\n"
-                        "4. Any structs/classes and their significance\n"
-                        "5. How this file fits into the project"
+                        "text": f"Analise este arquivo: {rel_path}\n\nContent:\n{content}\n\n"
+                        "Por favor, providencie as informações abaixo:\n"
+                        "1. Objetivo geral do arquivo\n"
+                        "2. Lista de todos os campos/variáveis e suas finalidades\n"
+                        "3. Definições de funções com entradas, saídas e propósitos\n"
+                        "4. Quaisquer estruturas/classes e seu significado\n"
+                        "5. Como este arquivo se encaixa no projeto\n"
+                        "Todas as informações devem ser geradas em Português do Brasil."
                     }]
                 }]
             )
@@ -168,16 +191,17 @@ class ProjectAnalyzer:
             # Analyze directory as a whole
             if file_summaries:
                 message = self.client.messages.create(
-                    model="claude-3-5-sonnet-20241022",
-                    max_tokens=1000,
+                    model="claude-3-7-sonnet-20250219",
+                    max_tokens=8192,
                     temperature=0,
-                    system="You are an AI assistant that analyzes code directories.",
+                    system="Você é um assistente de IA que analisa diretórios de código.",
                     messages=[{
                         "role": "user",
                         "content": [{
                             "type": "text",
-                            "text": f"Analyze this directory: {rel_path}\n\nFiles:\n{''.join(file_summaries)}\n\n"
-                            "Please provide a summary of this directory's purpose and how its contents work together."
+                            "text": f"Analise este diretório: {rel_path}\n\nFiles:\n{''.join(file_summaries)}\n\n"
+                            "Forneça um resumo do propósito deste diretório e como seu conteúdo funciona em conjunto.\n"
+                            "O resumo deve ser gerado em Português do Brasil."
                         }]
                     }]
                 )
@@ -224,7 +248,7 @@ class ProjectAnalyzer:
         
         # Write the final guidebook
         guidebook_path = self.script_dir / f'guidebook_{self.timestamp}.md'
-        with open(guidebook_path, 'w') as f:
+        with open(guidebook_path, 'w', encoding='utf-8') as f:
             f.write(guidebook_content)
         
         return guidebook_path
@@ -233,67 +257,68 @@ class ProjectAnalyzer:
         """Create the markdown developer guide using collected data"""
         
         message = self.client.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4000,
+            model="claude-3-7-sonnet-20250219",
+            max_tokens=8192,
             temperature=0,
-            system="You are an expert technical writer who creates clear, well-organized developer guides.",
+            system="Você é um escritor técnico especialista que cria guias para desenvolvedores claros e bem organizados.",
             messages=[{
                 "role": "user",
                 "content": [{
                     "type": "text",
                     "text": f"""
-Based on the following project analysis data, create a comprehensive developer guide in markdown format.
+Com base nos seguintes dados de análise de projeto, crie um guia abrangente para desenvolvedores em formato markdown.
 
-Initial Summaries:
+Resumos Iniciais:
 {initial_summaries}
 
-Detailed Findings:
+Resultados detalhados:
 {json.dumps(findings, indent=2)}
 
-Create a developer guide that includes:
+Crie um guia do desenvolvedor que inclua:
 
-1. Executive Summary
-   - Project purpose
-   - Main technologies
-   - Key features
+1. Resumo Executivo
+   - Objetivo do projeto
+   - Principais tecnologias
+   - Principais características
 
-2. Project Architecture
-   - High-level overview
-   - Key components
-   - Design patterns used
-   - Data flow
+2. Arquitetura do Projeto
+   - Visão geral de alto nível
+   - Componentes principais
+   - Padrões de design usados
+   - Fluxo de dados
 
-3. Setup & Installation
-   - Prerequisites
-   - Environment setup
-   - Configuration
+3. Setup & Instalação
+   - Pré-requisitos
+   - Configuração do ambiente
+   - Configuração do projeto
 
-4. Code Organization
-   - Directory structure
-   - Key files and their purposes
-   - Important modules/packages
+4. Organização do código
+   - Estrutura de diretório
+   - Arquivos-chave e seus propósitos
+   - Módulos/pacotes importantes
 
-5. Core Concepts
-   - Main abstractions
-   - Key interfaces
-   - Data models
+5. Conceitos Básicos
+   - Abstrações principais
+   - Interfaces principais
+   - Modelos de dados
 
-6. Development Workflow
-   - Building
-   - Testing
-   - Deployment
+6. Fluxo de trabalho de desenvolvimento
+   - Construção
+   - Teste
+   - Implantação
 
-7. API Reference
-   - Key functions
-   - Important classes
-   - Public interfaces
+7. Referência de API
+   - Funções principais
+   - Classes importantes
+   - Interfaces públicas
 
-8. Common Tasks
-   - Example workflows
-   - Code examples
-   - Best practices
+8. Tarefas comuns
+   - Fluxos de trabalho de exemplo
+   - Exemplos de código
+   - Melhores práticas
 
-Make the guide practical and easy to follow. Use clear headings, code examples where relevant, and include any important notes or warnings.
+Torne o guia prático e fácil de seguir. Use títulos claros, exemplos de código onde for relevante e inclua quaisquer notas ou avisos importantes.
+O documento deve ser gerado em Português do Brasil.
 """
                 }]
             }]
